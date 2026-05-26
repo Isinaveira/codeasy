@@ -23,21 +23,24 @@ function App() {
         title="HTML" 
         value={html} 
         colorClass="text-orange-400" 
-        onChange={setHtml} 
+        onChange={setHtml}
+        language="html" 
       />
 
       <EditorPane 
         title="CSS" 
         value={css} 
         colorClass="text-blue-400" 
-        onChange={setCss} 
+        onChange={setCss}
+        language="css" 
       />
 
       <EditorPane 
         title="JS" 
         value={js} 
         colorClass="text-yellow-400" 
-        onChange={setJs} 
+        onChange={setJs}
+        language="javascript" 
       />
 
       <PreviewPane 
