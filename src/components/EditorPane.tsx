@@ -6,20 +6,22 @@ interface EditorPaneProps {
   colorClass: string;
   language: "html" | "css" | "javascript";
   onChange: (newValue: string) => void;
+  theme: "dark" | "light";
 }
 
-function EditorPane({title, value, colorClass, language, onChange}: EditorPaneProps) {
+function EditorPane({title, value, colorClass, language, onChange, theme}: EditorPaneProps) {
   return (
-    <>
-      <section className="flex flex-col border-gray-700 h-full overflow-hidden">
-        <header className="p-2 bg-gray-800 text-xs font-bold uppercase tracking-widest flex">
-          <span className={colorClass}>{title}</span>
-        </header>
+    <section className="flex flex-col h-full overflow-hidden bg-surface">
+      {/* Corregido bg-bg-canvas por bg-canvas */}
+      <header className="p-3 bg-canvas text-xs font-bold uppercase tracking-widest flex border-b border-line">
+        <span className={colorClass}>{title}</span>
+      </header>
 
+      <div className="flex-1 w-full overflow-hidden">
         <Editor 
           height="100%"
           width="100%"
-          theme="vs-dark" //tema oscuro de VS Code
+          theme={(theme === "dark") ? 'vs-dark': 'vs'} 
           language={language}
           value={value}
           onChange={(value) => onChange(value || '')}
@@ -31,10 +33,9 @@ function EditorPane({title, value, colorClass, language, onChange}: EditorPanePr
             tabSize: 2,
             scrollBeyondLastLine: false
           }}        
-        
         />
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 

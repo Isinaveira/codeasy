@@ -1,7 +1,12 @@
 import {create} from 'zustand';
 
+type Theme = 'light' | 'dark';
 
 interface CodeState {
+    
+    theme: Theme;
+    setTheme: (theme: Theme) => void;
+    
     html: string;
     css: string;
     js: string;
@@ -24,6 +29,8 @@ export const useCodeStore = create<CodeState>((set) => ({
     setCss: (code) => set({css: code}),
     setJs: (code) => set({ js: code}),
     addLog: (log) => set((state) => ({ logs: [...state.logs, log] })),
-    clearLogs: () => set({ logs: [] }), 
+    clearLogs: () => set({ logs: [] }),
+    theme:'light',
+    setTheme: (theme) => set({ theme }),
 }));
 

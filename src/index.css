@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+/* ☀️ TEMA CLARO */
+:root {
+  --canvas: #f4f4f5;          
+  --surface: #ffffff;         
+  --border: #e4e4e7;          
+  --text-main: #18181b;       
+  --text-muted: #71717a;      
+  --accent: #3f3f46;          
+  --accent-hover: #18181b;
+}
+
+/* 🌙 TEMA OSCURO */
+.dark {
+  --canvas: #090d16;          
+  --surface: #0f1626;         
+  --border: #1e293b;          
+  --text-main: #f8fafc;       
+  --text-muted: #64748b;      
+  --accent: #38bdf8;          
+  --accent-hover: #7dd3fc;
+}
+
+/* 🚀 Registro de utilidades SEMÁNTICAS CORREGIDO para Tailwind v4 */
+@theme {
+  /* Al nombrarlos así, generas automáticamente: bg-canvas, bg-surface, text-canvas, etc. */
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-line: var(--border);
+  
+  /* Al nombrarlos así, generas: text-main, bg-main, text-dim, bg-dim */
+  --color-main: var(--text-main);
+  --color-dim: var(--text-muted);
+  
+  /* Generas: bg-brand, text-brand, bg-brand-hover */
+  --color-brand: var(--accent);
+  --color-brand-hover: var(--accent-hover);
+}
