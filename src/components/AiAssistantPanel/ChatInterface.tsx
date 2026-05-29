@@ -1,4 +1,4 @@
-import { useEffect, useRef, FormEvent } from "react";
+import { useEffect, useRef, type FormEvent } from "react";
 import type { Message } from "../../hooks/useAiAssistant";
 
 interface MessageListProps {

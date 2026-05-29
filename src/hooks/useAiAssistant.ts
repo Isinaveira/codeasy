@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, FormEvent } from "react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
 import { useCodeStore } from "../store/useCodeStore";
 
 export type AssistantStatus = "checking" | "config_error" | "ready" | "downloadable" | "downloading";
