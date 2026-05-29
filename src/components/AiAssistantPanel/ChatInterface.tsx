@@ -1,5 +1,6 @@
 import { useEffect, useRef, type FormEvent } from "react";
 import type { Message } from "../../hooks/useAiAssistant";
+import { marked } from "marked";
 
 interface MessageListProps {
   messages: Message[];
@@ -40,7 +41,14 @@ export function MessageList({ messages, isGenerating, messagesEndRef }: MessageL
           >
             {msg.role === "user" ? "Tú" : "Gemini Nano"}
           </span>
-          <p className="whitespace-pre-wrap">{msg.text}</p>
+          {msg.role === "user" ? (
+            <p className="whitespace-pre-wrap">{msg.text}</p>
+          ) : (
+            <div 
+              className="markdown-content text-xs w-full overflow-hidden"
+              dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) as string }}
+            />
+          )}
         </div>
       ))}
 

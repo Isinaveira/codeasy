@@ -3,6 +3,7 @@ import {create} from 'zustand';
 type Theme = 'light' | 'dark';
 export type LayoutMode = 'grid' | 'sidebar' | 'tabs';
 export type EditorTab = 'html' | 'css' | 'js';
+export type DevMode = 'web' | 'algorithms';
 
 export interface LogMessage {
   type: 'log' | 'error' | 'warn' | 'info';
@@ -21,6 +22,7 @@ interface CodeState {
     isAiOpen: boolean;
     
     // UI Layout States
+    devMode: DevMode;
     layoutMode: LayoutMode;
     activeTab: EditorTab;
     isHtmlCollapsed: boolean;
@@ -39,6 +41,7 @@ interface CodeState {
     setIsAiOpen: () => void;
     
     // UI Actions
+    setDevMode: (mode: DevMode) => void;
     setLayoutMode: (mode: LayoutMode) => void;
     setActiveTab: (tab: EditorTab) => void;
     toggleHtmlCollapsed: () => void;
@@ -58,6 +61,7 @@ export const useCodeStore = create<CodeState>((set) => ({
     theme: 'light',
     
     // Default Layout Values
+    devMode: 'web',
     layoutMode: 'grid',
     activeTab: 'html',
     isHtmlCollapsed: false,
@@ -77,6 +81,7 @@ export const useCodeStore = create<CodeState>((set) => ({
     setIsAiOpen: () => set((state) => ({isAiOpen: !state.isAiOpen})),
     
     // UI Actions
+    setDevMode: (devMode) => set({ devMode }),
     setLayoutMode: (layoutMode) => set({ layoutMode }),
     setActiveTab: (activeTab) => set({ activeTab }),
     toggleHtmlCollapsed: () => set((state) => ({ isHtmlCollapsed: !state.isHtmlCollapsed })),
