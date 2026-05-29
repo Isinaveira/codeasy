@@ -1,18 +1,14 @@
-import { useCodeStore } from "../store/useCodeStore";
-import logoLight from "../assets/icon_light.avif";
-import logoDark from "../assets/icon_black.avif";
-import ThemeToggler from "./ThemeToggler";
-
+import { useCodeStore } from "../../store/useCodeStore";
+import logoLight from "../../assets/icon_light.avif";
+import logoDark from "../../assets/icon_black.avif";
+import ThemeToggler from "../ThemeToggler/ThemeToggler";
+import { BrainCircuit } from "lucide-react";
 function TopBar() {
-    const { theme, setTheme } = useCodeStore();
+    const { theme, setTheme, isAiOpen, setIsAiOpen } = useCodeStore();
     const isDarkMode = theme === 'dark';
 
     return (
-        /* 
-          💡 TRUCO DE FUERZA BRUTA: 
-          Si Tailwind v4 se lía con la herencia de bg-surface en el header,
-          forzamos los colores exactos inyectando la condición directamente en la clase.
-        */
+        
         <header 
           className={`h-16 w-full flex items-center justify-between px-6 select-none transition-colors duration-200 border-b
             ${isDarkMode 
@@ -22,7 +18,6 @@ function TopBar() {
           `}
         >
           
-          {/* Logo y Nombre */}
           <div className="flex items-center gap-2 font-semibold">
             <img 
               src={isDarkMode ? logoDark : logoLight} 
@@ -32,8 +27,15 @@ function TopBar() {
             Codeasy
           </div>
 
-          {/* Zona del Botón: Le pasamos el estado real de Zustand al Toggler */}
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsAiOpen()}
+              aria-label="Abrir asistente de IA"
+              className={`p-2 rounded-lg border border-line cursor-pointer transition-colors text-xs font-bold 
+                ${isAiOpen ? "bg-brand text-white border-brand" : "bg-canvas text-main hover:border-brand"}`}
+            >
+              <BrainCircuit className="w-5 h-5"/>
+            </button>
             <ThemeToggler 
               darkMode={isDarkMode} 
               setDarkMode={(value) => setTheme(value ? 'dark' : 'light')} 

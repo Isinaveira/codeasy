@@ -1,7 +1,8 @@
 import { useCodeStore } from "./store/useCodeStore";
-import EditorPane from "./components/EditorPane";
-import PreviewPane from "./components/PreviewPane";
-import TopBar from "./components/TopBar";
+import EditorPane from "./components/EditorPane/EditorPane";
+import PreviewPane from "./components/PreviewPane/PreviewPane";
+import AiAssistantPanel from "./components/AiAssistantPanel/AiAssistantPanel";
+import TopBar from "./components/TopBar/TopBar";
 import { useEffect } from "react";
 
 function App() {
@@ -19,8 +20,13 @@ function App() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === 'CONSOLE_LOG') {
-        addLog(event.data.content);
+      if (event.data && event.data.type === 'CONSOLE_LOG') {
+        const { logType, content, timestamp } = event.data;
+        addLog({
+          type: logType || 'log',
+          content: content || '',
+          timestamp: timestamp || new Date().toLocaleTimeString()
+        });
       }
     };
 
@@ -34,18 +40,9 @@ function App() {
       <TopBar />
       
       <div className="flex flex-1 w-full overflow-hidden">
-        {/* Barra lateral unificada */}
-        <aside className="w-16 h-full bg-surface border-r border-line flex flex-col items-center py-4 space-y-4 transition-colors duration-200">
-          <div className="w-10 h-10 bg-canvas border border-line rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:border-brand transition-colors">
-            FS
-          </div>
-          <div className="w-10 h-10 bg-canvas border border-line rounded flex items-center justify-center text-xs font-bold cursor-pointer hover:border-brand transition-colors">
-            ALG
-          </div>
-        </aside>    
-
+           
         {/* El contenedor principal de la rejilla */}
-        <main className="grid grid-cols-2 grid-rows-2 flex-1 h-full bg-line gap-[1px]">  
+        <main className="grid grid-cols-2 grid-rows-2 flex-1 h-full bg-line gap-px">  
           <EditorPane 
             title="HTML" 
             value={html} 
@@ -77,6 +74,7 @@ function App() {
             title="Preview"
           />
         </main>
+        <AiAssistantPanel />
       </div>
     </div>
   );
