@@ -4,6 +4,7 @@ import logoLight from "../../assets/icon_light.avif";
 import logoDark from "../../assets/icon_black.avif";
 import ThemeToggler from "../ThemeToggler/ThemeToggler";
 import { BrainCircuit, LayoutGrid, Columns3, Layers, Globe, Code2, Save, Download, Check } from "lucide-react";
+import JSZip from "jszip";
 
 function TopBar() {
   const { 
@@ -64,6 +65,51 @@ function TopBar() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadZip = async () => {
+    const zip = new JSZip();
+
+    // index.html referenciando a style.css y script.js
+    const indexHtmlContent = `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto Codeasy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+${html}
+  <script src="script.js"></script>
+</body>
+</html>`;
+
+    zip.file("index.html", indexHtmlContent);
+    zip.file("style.css", css);
+    zip.file("script.js", webJs);
+
+    try {
+      const content = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(content);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "proyecto-codeasy.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      setToastMessage("¡Proyecto web descargado en formato ZIP!");
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error generando archivo ZIP:", error);
+    }
+    
+    setShowDropdown(false);
   };
 
   const handleDownloadSingleHTML = () => {
@@ -234,6 +280,16 @@ ${webJs}
               </div>
               {devMode === 'web' ? (
                 <>
+                  <button
+                    onClick={handleDownloadZip}
+                    className="w-full text-left px-3 py-2 text-xs text-main hover:bg-canvas hover:text-brand flex items-center gap-2 cursor-pointer transition-colors border-b border-line/45"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 shrink-0" />
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-xs">Descargar ZIP (.zip)</span>
+                      <span className="text-[9px] text-dim">Archivos index, style y script</span>
+                    </div>
+                  </button>
                   <button
                     onClick={handleDownloadSingleHTML}
                     className="w-full text-left px-3 py-2 text-xs text-main hover:bg-canvas hover:text-brand flex items-center gap-2 cursor-pointer transition-colors border-b border-line/45"
