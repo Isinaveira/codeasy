@@ -18,6 +18,8 @@ interface CodeState {
     html: string;
     css: string;
     js: string;
+    webJs: string;
+    algoJs: string;
     logs: LogMessage[];
     isAiOpen: boolean;
     
@@ -52,16 +54,40 @@ interface CodeState {
     setIsConsoleCollapsed: (collapsed: boolean) => void;
 }
 
-export const useCodeStore = create<CodeState>((set) => ({
-    html: '<h1>Hola desde Codeasy </h1>',
-    css: 'h1 { color: #38bdf8; font-family: sans-serif; text-align: center; margin-top: 2rem; }',
-    js: 'console.log("¡Editor Listo y conectado!")',
+const getSavedValue = (key: string, defaultValue: string) => {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved !== null ? saved : defaultValue;
+  } catch (e) {
+    return defaultValue;
+  }
+};
+
+const defaultHtml = '<h1>Hola desde Codeasy </h1>';
+const defaultCss = 'h1 { color: #38bdf8; font-family: sans-serif; text-align: center; margin-top: 2rem; }';
+const defaultWebJs = 'console.log("¡Editor Listo y conectado!")';
+const defaultAlgoJs = '// Escribe tu algoritmo en JavaScript aquí\nconsole.log("¡Listo para resolver algoritmos!");';
+
+export const useCodeStore = create<CodeState>((set) => {
+  const initialDevMode = (localStorage.getItem('codeasy_dev_mode') as DevMode) || 'web';
+  const initialHtml = getSavedValue('codeasy_html', defaultHtml);
+  const initialCss = getSavedValue('codeasy_css', defaultCss);
+  const initialWebJs = getSavedValue('codeasy_web_js', defaultWebJs);
+  const initialAlgoJs = getSavedValue('codeasy_algo_js', defaultAlgoJs);
+  const initialJs = initialDevMode === 'web' ? initialWebJs : initialAlgoJs;
+
+  return {
+    html: initialHtml,
+    css: initialCss,
+    webJs: initialWebJs,
+    algoJs: initialAlgoJs,
+    js: initialJs,
     logs: [],
     isAiOpen: false,
     theme: 'light',
     
     // Default Layout Values
-    devMode: 'web',
+    devMode: initialDevMode,
     layoutMode: 'grid',
     activeTab: 'html',
     isHtmlCollapsed: false,
@@ -72,16 +98,37 @@ export const useCodeStore = create<CodeState>((set) => ({
     isConsoleCollapsed: false,
     
     // Core Actions
-    setHtml: (code) => set({html: code}),
-    setCss: (code) => set({css: code}),
-    setJs: (code) => set({ js: code}),
+    setHtml: (code) => set(() => {
+      localStorage.setItem('codeasy_html', code);
+      return { html: code };
+    }),
+    setCss: (code) => set(() => {
+      localStorage.setItem('codeasy_css', code);
+      return { css: code };
+    }),
+    setJs: (code) => set((state) => {
+      if (state.devMode === 'web') {
+        localStorage.setItem('codeasy_web_js', code);
+        return { js: code, webJs: code };
+      } else {
+        localStorage.setItem('codeasy_algo_js', code);
+        return { js: code, algoJs: code };
+      }
+    }),
     addLog: (log) => set((state) => ({ logs: [...state.logs, log] })),
     clearLogs: () => set({ logs: [] }),
     setTheme: (theme) => set({ theme }),
     setIsAiOpen: () => set((state) => ({isAiOpen: !state.isAiOpen})),
     
     // UI Actions
-    setDevMode: (devMode) => set({ devMode }),
+    setDevMode: (devMode) => set((state) => {
+      localStorage.setItem('codeasy_dev_mode', devMode);
+      const nextJs = devMode === 'web' ? state.webJs : state.algoJs;
+      return { 
+        devMode,
+        js: nextJs
+      };
+    }),
     setLayoutMode: (layoutMode) => set({ layoutMode }),
     setActiveTab: (activeTab) => set({ activeTab }),
     toggleHtmlCollapsed: () => set((state) => ({ isHtmlCollapsed: !state.isHtmlCollapsed })),
@@ -90,4 +137,5 @@ export const useCodeStore = create<CodeState>((set) => ({
     setEditorWidthPercent: (editorWidthPercent) => set({ editorWidthPercent }),
     setConsoleHeightPx: (consoleHeightPx) => set({ consoleHeightPx }),
     setIsConsoleCollapsed: (isConsoleCollapsed) => set({ isConsoleCollapsed }),
-}));
+  };
+});
