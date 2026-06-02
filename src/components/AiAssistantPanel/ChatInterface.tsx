@@ -29,20 +29,20 @@ export function MessageList({ messages, isGenerating, messagesEndRef }: MessageL
       {messages.map((msg, index) => (
         <div
           key={index}
-          className={`flex flex-col max-w-[85%] rounded-lg p-3 text-xs leading-relaxed shadow-xs
+          className={`flex flex-col max-w-[85%] p-3.5 text-xs leading-relaxed shadow-sm transition-all duration-200
             ${msg.role === "user"
-              ? "ml-auto bg-brand text-white"
-              : "mr-auto bg-canvas border border-line text-main"
+              ? "ml-auto bg-gradient-to-tr from-brand to-brand-hover text-white border border-brand/20 rounded-2xl rounded-tr-2xs shadow-brand/5"
+              : "mr-auto bg-surface/60 dark:bg-surface/45 backdrop-blur-md border border-line/65 text-main rounded-2xl rounded-tl-2xs"
             }`}
         >
           <span
-            className={`text-[10px] font-bold uppercase tracking-wider mb-1 opacity-60
-              ${msg.role === "user" ? "text-white" : "text-brand"}`}
+            className={`text-[9px] font-bold uppercase tracking-widest mb-1
+              ${msg.role === "user" ? "text-white/80" : "text-brand"}`}
           >
             {msg.role === "user" ? "Tú" : "Gemini Nano"}
           </span>
           {msg.role === "user" ? (
-            <p className="whitespace-pre-wrap">{msg.text}</p>
+            <p className="whitespace-pre-wrap font-medium tracking-tight">{msg.text}</p>
           ) : (
             <div 
               className="markdown-content text-xs w-full overflow-hidden"
@@ -54,9 +54,13 @@ export function MessageList({ messages, isGenerating, messagesEndRef }: MessageL
 
       {/* Animación de respuesta */}
       {isGenerating && (
-        <div className="mr-auto bg-canvas border border-line text-dim rounded-lg p-3 text-xs animate-pulse flex items-center gap-2">
-          <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce" />
-          <span>Pensando...</span>
+        <div className="mr-auto bg-surface/60 dark:bg-surface/45 backdrop-blur-md border border-line/65 text-dim rounded-2xl rounded-tl-2xs p-3 text-xs animate-pulse flex items-center gap-2.5 shadow-2xs">
+          <div className="flex items-center gap-1 shrink-0">
+            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce [animation-delay:-0.3s]" />
+            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce [animation-delay:-0.15s]" />
+            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce" />
+          </div>
+          <span className="scale-90 opacity-70 font-semibold uppercase tracking-wider text-[9px]">Analizando código...</span>
         </div>
       )}
       <div ref={messagesEndRef} />
