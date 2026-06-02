@@ -206,9 +206,9 @@ ${webJs}
       </div>
 
       {/* SELECTOR DE LAYOUT EN MEDIO */}
-      {devMode === 'web' ? (
-        <div className="flex items-center rounded-lg bg-canvas p-0.5 border border-line scale-95 shadow-xs">
-          {layouts.map(({ mode, label, icon: Icon }) => {
+      <div className="flex items-center rounded-lg bg-canvas p-0.5 border border-line scale-95 shadow-xs">
+        {devMode === 'web' ? (
+          layouts.map(({ mode, label, icon: Icon }) => {
             const isActive = layoutMode === mode;
             return (
               <button
@@ -226,11 +226,40 @@ ${webJs}
                 <span className="hidden sm:inline">{label}</span>
               </button>
             );
-          })}
-        </div>
-      ) : (
-        <div className="w-1" />
-      )}
+          })
+        ) : (
+          /* Selector de Layout para el Modo Algoritmos */
+          <>
+            <button
+              onClick={() => setLayoutMode('grid')}
+              title="Fila (Stack Vertical)"
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer select-none
+                ${layoutMode !== 'sidebar'
+                  ? "bg-surface text-brand shadow-xs border border-line/30"
+                  : "text-dim hover:text-main"
+                }
+              `}
+            >
+              <LayoutGrid className={`w-3.5 h-3.5 ${layoutMode !== 'sidebar' ? "text-brand" : "text-dim"}`} />
+              <span className="hidden sm:inline">Fila (Stack)</span>
+            </button>
+            
+            <button
+              onClick={() => setLayoutMode('sidebar')}
+              title="Columnas (Sidebar)"
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer select-none
+                ${layoutMode === 'sidebar'
+                  ? "bg-surface text-brand shadow-xs border border-line/30"
+                  : "text-dim hover:text-main"
+                }
+              `}
+            >
+              <Columns3 className={`w-3.5 h-3.5 ${layoutMode === 'sidebar' ? "text-brand" : "text-dim"}`} />
+              <span className="hidden sm:inline">Columnas (Sidebar)</span>
+            </button>
+          </>
+        )}
+      </div>
 
       {/* CONTROLES DERECHOS */}
       <div className="flex items-center gap-3">

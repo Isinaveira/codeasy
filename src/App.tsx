@@ -157,19 +157,53 @@ function App() {
           
           {devMode === 'algorithms' ? (
             /* ================= MODO ALGORITMOS ================= */
-            <div className="flex-1 h-full flex flex-col overflow-hidden gap-2 pr-1.5">
-              <div className="flex-1 min-h-0 flex flex-col relative">
-                <EditorPane 
-                  title="JavaScript" 
-                  value={js} 
-                  colorClass="text-amber-500 dark:text-amber-400" 
-                  onChange={setJs}
-                  language="javascript"
-                  theme={theme}
-                />
+            layoutMode === 'sidebar' ? (
+              /* ALGORITMOS EN COLUMNAS (SIDE-BY-SIDE) */
+              <>
+                {/* PANEL IZQUIERDO: EDITOR */}
+                <div 
+                  className="h-full overflow-hidden pr-1.5 shrink-0 flex flex-col relative"
+                  style={{ width: `${editorWidthPercent}%` }}
+                >
+                  <EditorPane 
+                    title="JavaScript" 
+                    value={js} 
+                    colorClass="text-amber-500 dark:text-amber-400" 
+                    onChange={setJs}
+                    language="javascript"
+                    theme={theme}
+                  />
+                </div>
+
+                {/* DIVISOR DE ARRASTRE VERTICAL */}
+                <div 
+                  onMouseDown={handleMouseDown}
+                  className="w-1.5 hover:w-2 shrink-0 cursor-col-resize h-full bg-canvas hover:bg-brand/40 active:bg-brand/60 transition-all duration-200 z-10 flex items-center justify-center relative group"
+                >
+                  <div className="absolute top-1/2 -translate-y-1/2 w-0.5 h-10 rounded bg-line opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+
+                {/* PANEL DERECHO: CONSOLA */}
+                <div className="flex-1 h-full pl-1.5 flex flex-col overflow-hidden relative">
+                  <ConsolePane isFullHeight={true} />
+                </div>
+              </>
+            ) : (
+              /* ALGORITMOS EN FILAS (STACK VERTICAL POR DEFECTO) */
+              <div className="flex-1 h-full flex flex-col overflow-hidden gap-2 pr-1.5">
+                <div className="flex-1 min-h-0 flex flex-col relative">
+                  <EditorPane 
+                    title="JavaScript" 
+                    value={js} 
+                    colorClass="text-amber-500 dark:text-amber-400" 
+                    onChange={setJs}
+                    language="javascript"
+                    theme={theme}
+                  />
+                </div>
+                <ConsolePane />
               </div>
-              <ConsolePane />
-            </div>
+            )
           ) : (
             /* ================= MODO DESARROLLO WEB ================= */
             <>

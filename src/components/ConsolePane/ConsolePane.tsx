@@ -2,7 +2,11 @@ import { useCodeStore } from "../../store/useCodeStore";
 import { useEffect, useRef } from "react";
 import { Trash2, Terminal, ChevronDown, ChevronUp } from "lucide-react";
 
-export default function ConsolePane() {
+interface ConsolePaneProps {
+  isFullHeight?: boolean;
+}
+
+export default function ConsolePane({ isFullHeight = false }: ConsolePaneProps) {
   const { 
     logs, 
     clearLogs,
@@ -16,10 +20,10 @@ export default function ConsolePane() {
 
   // Auto-scroll to bottom on new logs
   useEffect(() => {
-    if (consoleEndRef.current && !isConsoleCollapsed) {
+    if (consoleEndRef.current && (!isConsoleCollapsed || isFullHeight)) {
       consoleEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [logs, isConsoleCollapsed]);
+  }, [logs, isConsoleCollapsed, isFullHeight]);
 
   const startResize = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -76,19 +80,26 @@ export default function ConsolePane() {
 
   return (
     <div 
-      className="flex flex-col border-t border-line/70 shrink-0 relative transition-all duration-200 bg-surface rounded-b-lg overflow-hidden"
-      style={{ height: isConsoleCollapsed ? "30px" : `${consoleHeightPx}px` }}
+      className={`flex flex-col relative transition-all duration-200 bg-surface overflow-hidden
+        ${isFullHeight 
+          ? "h-full w-full border border-line/45 rounded-lg shadow-2xs" 
+          : "border-t border-line/70 rounded-b-lg shrink-0"
+        }`}
+      style={isFullHeight ? undefined : { height: isConsoleCollapsed ? "30px" : `${consoleHeightPx}px` }}
     >
       {/* RESIZE DIVIDER HANDLE */}
-      <div 
-        onMouseDown={startResize}
-        className="absolute -top-1 left-0 right-0 h-2 cursor-ns-resize hover:bg-brand/50 transition-colors z-20"
-      />
+      {!isFullHeight && (
+        <div 
+          onMouseDown={startResize}
+          className="absolute -top-1 left-0 right-0 h-2 cursor-ns-resize hover:bg-brand/50 transition-colors z-20"
+        />
+      )}
 
       {/* CABECERA */}
       <header 
-        onClick={() => setIsConsoleCollapsed(!isConsoleCollapsed)}
-        className="px-3.5 h-[30px] bg-canvas text-[9px] font-bold uppercase tracking-wider text-dim border-b border-line flex justify-between items-center select-none cursor-pointer hover:bg-line/40 shrink-0"
+        onClick={isFullHeight ? undefined : () => setIsConsoleCollapsed(!isConsoleCollapsed)}
+        className={`px-3.5 h-[30px] bg-canvas text-[9px] font-bold uppercase tracking-wider text-dim border-b border-line flex justify-between items-center select-none shrink-0
+          ${isFullHeight ? "" : "cursor-pointer hover:bg-line/40"}`}
       >
         <div className="flex items-center gap-1.5">
           <Terminal className="w-3.5 h-3.5 text-emerald-500" />
@@ -101,7 +112,7 @@ export default function ConsolePane() {
         </div>
         
         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          {logs.length > 0 && !isConsoleCollapsed && (
+          {logs.length > 0 && (isFullHeight || !isConsoleCollapsed) && (
             <button
               onClick={clearLogs}
               title="Clear Console"
@@ -110,17 +121,19 @@ export default function ConsolePane() {
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}
-          <button
-            onClick={() => setIsConsoleCollapsed(!isConsoleCollapsed)}
-            className="p-1 rounded text-dim hover:text-main transition-colors cursor-pointer shrink-0"
-          >
-            {isConsoleCollapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
+          {!isFullHeight && (
+            <button
+              onClick={() => setIsConsoleCollapsed(!isConsoleCollapsed)}
+              className="p-1 rounded text-dim hover:text-main transition-colors cursor-pointer shrink-0"
+            >
+              {isConsoleCollapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+          )}
         </div>
       </header>
       
       {/* LOG MESSAGES LIST */}
-      {!isConsoleCollapsed && (
+      {(isFullHeight || !isConsoleCollapsed) && (
         <div className="flex-1 bg-surface font-mono text-xs overflow-y-auto min-h-0">
           {logs.length === 0 ? (
             <div className="p-3 text-dim italic opacity-50 select-none text-[11px]">
