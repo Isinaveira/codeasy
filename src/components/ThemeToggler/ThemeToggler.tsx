@@ -15,19 +15,19 @@ export default function ThemeToggler({ darkMode, setDarkMode }: ThemeTogglerProp
     >
       {/* Icono del Sol (Light) */}
       <Sun 
-        className={`w-3.5 h-3.5 text-amber-500 transition-all duration-500 z-10 
+        className={`w-3.5 h-3.5 transition-all duration-500 z-10 
           ${darkMode 
-            ? 'opacity-30 scale-75 rotate-90 translate-x-[-2px]' 
-            : 'opacity-100 scale-100 rotate-0'
+            ? 'text-dim opacity-50 scale-75 rotate-90 translate-x-[-2px]' 
+            : 'text-white scale-100 rotate-0'
           }`} 
       />
       
       {/* Icono de la Luna (Dark) */}
       <Moon 
-        className={`w-3.5 h-3.5 text-sky-400 transition-all duration-500 z-10 
+        className={`w-3.5 h-3.5 transition-all duration-500 z-10 
           ${darkMode 
-            ? 'opacity-100 scale-100 rotate-0' 
-            : 'opacity-30 scale-75 -rotate-90 translate-x-[2px]'
+            ? 'text-slate-900 scale-100 rotate-0' 
+            : 'text-dim opacity-50 scale-75 -rotate-90 translate-x-[2px]'
           }`} 
       />
 
@@ -39,9 +39,7 @@ export default function ThemeToggler({ darkMode, setDarkMode }: ThemeTogglerProp
             : "left-1"
           }
         `}
-      >
-        <div className="w-1.5 h-1.5 rounded-full bg-surface/80" />
-      </div>
+      />
     </button>
   );
 }
