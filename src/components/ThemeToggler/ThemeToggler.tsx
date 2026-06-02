@@ -33,10 +33,10 @@ export default function ThemeToggler({ darkMode, setDarkMode }: ThemeTogglerProp
 
       {/* Deslizador (Esfera Interior) */}
       <div 
-        className={`absolute top-1 bottom-1 w-5 h-5 rounded-full bg-brand shadow-md transition-all duration-300 ease-out
+        className={`absolute top-[2px] w-6 h-6 rounded-full bg-brand shadow-md transition-all duration-300 ease-out
           ${darkMode 
-            ? "left-8" 
-            : "left-1"
+            ? "left-[30px]" 
+            : "left-[2px]"
           }
         `}
       />
