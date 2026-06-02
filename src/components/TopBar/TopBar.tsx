@@ -3,8 +3,9 @@ import { useCodeStore, type LayoutMode } from "../../store/useCodeStore";
 import logoLight from "../../assets/icon_light.avif";
 import logoDark from "../../assets/icon_black.avif";
 import ThemeToggler from "../ThemeToggler/ThemeToggler";
-import { BrainCircuit, LayoutGrid, Columns3, Layers, Globe, Code2, Save, Download, Check } from "lucide-react";
+import { BrainCircuit, LayoutGrid, Columns3, Layers, Globe, Code2, Save, Download, Check, Compass } from "lucide-react";
 import JSZip from "jszip";
+import { useTour } from "../../hooks/useTour";
 
 function TopBar() {
   const {
@@ -22,6 +23,7 @@ function TopBar() {
     algoJs
   } = useCodeStore();
 
+  const { startTour } = useTour();
   const isDarkMode = theme === 'dark';
 
   const [showToast, setShowToast] = useState(false);
@@ -158,7 +160,7 @@ ${webJs}
       {/* LOGO Y SELECTOR DE MODO */}
       <div className="flex items-center gap-4">
         {/* LOGO */}
-        <div className="flex items-center gap-2 font-bold text-sm tracking-tight text-main">
+        <div id="codeasy-logo" className="flex items-center gap-2 font-bold text-sm tracking-tight text-main">
           <img
             src={isDarkMode ? logoDark : logoLight}
             alt="Codeasy logo"
@@ -176,7 +178,7 @@ ${webJs}
         </div>
 
         {/* SELECTOR DE MODO (WEB / ALGORITHMS) */}
-        <div className="flex items-center rounded-lg bg-canvas p-0.5 border border-line scale-90 shadow-2xs">
+        <div id="dev-mode-selector" className="flex items-center rounded-lg bg-canvas p-0.5 border border-line scale-90 shadow-2xs">
           <button
             onClick={() => setDevMode('web')}
             title="Modo Desarrollo Web Completo"
@@ -206,7 +208,7 @@ ${webJs}
       </div>
 
       {/* SELECTOR DE LAYOUT EN MEDIO */}
-      <div className="flex items-center rounded-lg bg-canvas p-0.5 border border-line scale-95 shadow-xs">
+      <div id="layout-mode-selector" className="flex items-center rounded-lg bg-canvas p-0.5 border border-line scale-95 shadow-xs">
         {devMode === 'web' ? (
           layouts.map(({ mode, label, icon: Icon }) => {
             const isActive = layoutMode === mode;
@@ -265,6 +267,7 @@ ${webJs}
       <div className="flex items-center gap-3">
         {/* BOTÓN ASISTENTE IA */}
         <button
+          id="ai-assistant-toggle"
           onClick={() => setIsAiOpen()}
           aria-label="Abrir asistente de IA"
           title="Asistente IA local (Gemini)"
@@ -278,7 +281,7 @@ ${webJs}
         </button>
 
         {/* BOTÓN GUARDAR Y EXPORTAR */}
-        <div className="relative flex items-center bg-canvas rounded-lg border border-line scale-95 shadow-2xs">
+        <div id="save-export-container" className="relative flex items-center bg-canvas rounded-lg border border-line scale-95 shadow-2xs">
           {/* BOTÓN GUARDAR EXPLÍCITO */}
           <button
             onClick={handleSave}
@@ -376,8 +379,19 @@ ${webJs}
           )}
         </div>
 
+        {/* BOTÓN DE TUTORIAL COMPASS */}
+        <button
+          id="tutorial-toggle"
+          onClick={startTour}
+          aria-label="Iniciar tutorial guiado"
+          title="Iniciar tutorial interactivo"
+          className="p-1.5 rounded-lg border bg-canvas border-line text-main hover:text-brand hover:border-brand/40 cursor-pointer transition-all duration-200 scale-95 flex items-center justify-center shadow-2xs"
+        >
+          <Compass className="w-4 h-4" />
+        </button>
+
         {/* SELECTOR DE TEMA */}
-        <div className="flex items-center scale-90 border-l border-line/50 pl-3">
+        <div id="theme-toggle-container" className="flex items-center scale-90 border-l border-line/50 pl-3">
           <ThemeToggler
             darkMode={isDarkMode}
             setDarkMode={(value) => setTheme(value ? 'dark' : 'light')}

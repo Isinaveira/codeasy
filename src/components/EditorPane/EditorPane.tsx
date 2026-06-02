@@ -97,6 +97,7 @@ function EditorPane({
 
   return (
     <section 
+      id={`editor-pane-${language}`}
       className={`flex flex-col overflow-hidden bg-surface transition-all duration-200 border border-line/45 rounded-lg shadow-2xs h-full w-full
         ${isCollapsed ? "h-auto flex-none shrink-0" : "flex-1 min-h-[40px]"}
       `}

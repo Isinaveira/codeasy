@@ -80,6 +80,7 @@ export default function ConsolePane({ isFullHeight = false }: ConsolePaneProps) 
 
   return (
     <div 
+      id="console-pane-container"
       className={`flex flex-col relative transition-all duration-200 bg-surface overflow-hidden
         ${isFullHeight 
           ? "h-full w-full border border-line/45 rounded-lg shadow-2xs" 

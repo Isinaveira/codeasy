@@ -100,7 +100,7 @@ function PreviewPane({ title }: IPreviewPaneProps) {
    `;
 
   return (
-    <section className="flex flex-col h-full bg-surface overflow-hidden border border-line/45 rounded-lg shadow-2xs">
+    <section id="preview-pane-container" className="flex flex-col h-full bg-surface overflow-hidden border border-line/45 rounded-lg shadow-2xs">
       {/* Cabecera de la Vista Previa */}
       <header className="px-3 py-2 bg-canvas text-[10px] font-bold uppercase tracking-wider text-dim border-b border-line/50 flex items-center gap-1.5 select-none shrink-0">
         <Globe className="w-3.5 h-3.5 text-brand/70" />
