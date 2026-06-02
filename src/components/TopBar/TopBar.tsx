@@ -7,12 +7,12 @@ import { BrainCircuit, LayoutGrid, Columns3, Layers, Globe, Code2, Save, Downloa
 import JSZip from "jszip";
 
 function TopBar() {
-  const { 
-    theme, 
-    setTheme, 
-    isAiOpen, 
-    setIsAiOpen, 
-    layoutMode, 
+  const {
+    theme,
+    setTheme,
+    isAiOpen,
+    setIsAiOpen,
+    layoutMode,
     setLayoutMode,
     devMode,
     setDevMode,
@@ -21,7 +21,7 @@ function TopBar() {
     webJs,
     algoJs
   } = useCodeStore();
-  
+
   const isDarkMode = theme === 'dark';
 
   const [showToast, setShowToast] = useState(false);
@@ -99,7 +99,7 @@ ${html}
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       setToastMessage("¡Proyecto web descargado en formato ZIP!");
       setShowToast(true);
       setTimeout(() => {
@@ -108,7 +108,7 @@ ${html}
     } catch (error) {
       console.error("Error generando archivo ZIP:", error);
     }
-    
+
     setShowDropdown(false);
   };
 
@@ -130,7 +130,7 @@ ${webJs}
   </script>
 </body>
 </html>`;
-    
+
     downloadFile("proyecto-codeasy.html", combinedHTML, "text/html");
     setShowDropdown(false);
   };
@@ -147,10 +147,10 @@ ${webJs}
   ];
 
   return (
-    <header 
+    <header
       className={`h-11 w-full flex items-center justify-between px-4 select-none transition-colors duration-200 border-b z-20 shrink-0
-        ${isDarkMode 
-          ? "bg-surface border-line" 
+        ${isDarkMode
+          ? "bg-surface border-line"
           : "bg-white border-slate-200"
         }
       `}
@@ -159,19 +159,19 @@ ${webJs}
       <div className="flex items-center gap-4">
         {/* LOGO */}
         <div className="flex items-center gap-2 font-bold text-sm tracking-tight text-main">
-          <img 
-            src={isDarkMode ? logoDark : logoLight} 
-            alt="Codeasy logo" 
+          <img
+            src={isDarkMode ? logoDark : logoLight}
+            alt="Codeasy logo"
             className="h-6 w-auto"
           />
-          <span 
+          <span
             style={{ color: isDarkMode ? '#f8fafc' : '#0f172a' }}
             className="font-extrabold text-sm tracking-tight"
           >
             Codeasy
           </span>
           <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-canvas border border-line text-dim scale-90">
-            v1.2
+            v.0.1
           </span>
         </div>
 
@@ -181,21 +181,21 @@ ${webJs}
             onClick={() => setDevMode('web')}
             title="Modo Desarrollo Web Completo"
             className={`flex items-center gap-1.5 px-2.5 py-0.7 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer select-none
-              ${devMode === 'web' 
-                ? 'bg-surface text-brand shadow-3xs border border-line/30' 
+              ${devMode === 'web'
+                ? 'bg-surface text-brand shadow-3xs border border-line/30'
                 : 'text-dim hover:text-main'
               }`}
           >
             <Globe className="w-3 h-3 text-brand" />
             <span>Web</span>
           </button>
-          
+
           <button
             onClick={() => setDevMode('algorithms')}
             title="Modo Algoritmos y Estructuras"
             className={`flex items-center gap-1.5 px-2.5 py-0.7 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all cursor-pointer select-none
-              ${devMode === 'algorithms' 
-                ? 'bg-surface text-brand shadow-3xs border border-line/30' 
+              ${devMode === 'algorithms'
+                ? 'bg-surface text-brand shadow-3xs border border-line/30'
                 : 'text-dim hover:text-main'
               }`}
           >
@@ -216,8 +216,8 @@ ${webJs}
                 onClick={() => setLayoutMode(mode)}
                 title={label}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all cursor-pointer select-none
-                  ${isActive 
-                    ? "bg-surface text-brand shadow-xs border border-line/30" 
+                  ${isActive
+                    ? "bg-surface text-brand shadow-xs border border-line/30"
                     : "text-dim hover:text-main"
                   }
                 `}
@@ -240,8 +240,8 @@ ${webJs}
           aria-label="Abrir asistente de IA"
           title="Asistente IA local (Gemini)"
           className={`p-1.5 rounded-lg border cursor-pointer transition-all duration-200 scale-95 hover:shadow-xs
-            ${isAiOpen 
-              ? "bg-brand text-white border-brand shadow-sm animate-pulse" 
+            ${isAiOpen
+              ? "bg-brand text-white border-brand shadow-sm animate-pulse"
               : "bg-canvas text-main border-line hover:border-brand/40"
             }`}
         >
@@ -259,7 +259,7 @@ ${webJs}
             <Save className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Guardar</span>
           </button>
-          
+
           {/* BOTÓN DROPDOWN EXPORTACIÓN */}
           <button
             onClick={(e) => {
@@ -349,9 +349,9 @@ ${webJs}
 
         {/* SELECTOR DE TEMA */}
         <div className="flex items-center scale-90 border-l border-line/50 pl-3">
-          <ThemeToggler 
-            darkMode={isDarkMode} 
-            setDarkMode={(value) => setTheme(value ? 'dark' : 'light')} 
+          <ThemeToggler
+            darkMode={isDarkMode}
+            setDarkMode={(value) => setTheme(value ? 'dark' : 'light')}
           />
         </div>
       </div>
