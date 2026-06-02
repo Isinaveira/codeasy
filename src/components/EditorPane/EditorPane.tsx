@@ -1,5 +1,6 @@
 import { Editor } from "@monaco-editor/react";
 import { FileCode, FileText, Blocks, ChevronDown, ChevronRight } from "lucide-react";
+import { emmetHTML, emmetCSS } from "emmet-monaco-es";
 
 interface EditorPaneProps {
   title: string;
@@ -40,6 +41,14 @@ function EditorPane({
   };
 
   const handleEditorWillMount = (monaco: any) => {
+    // Registramos Emmet de forma segura para autocompletado en HTML y CSS
+    try {
+      emmetHTML(monaco, ["html"]);
+      emmetCSS(monaco, ["css"]);
+    } catch (e) {
+      console.warn("No se pudo iniciar Emmet en este entorno (posiblemente bajo test unitarios):", e);
+    }
+
     // Definimos el tema oscuro premium de Codeasy
     monaco.editor.defineTheme("codeasy-dark", {
       base: "vs-dark",
