@@ -29,7 +29,7 @@ interface LanguageModelFactory {
 }
 
 export function useAiAssistant() {
-  // 1. Contexto de Zustand
+  //Contexto de Zustand
   const { isAiOpen, html, css, js, devMode } = useCodeStore();
 
   // 2. Estados locales
@@ -54,11 +54,11 @@ export function useAiAssistant() {
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // 3. Referencias seguras
+  //Referencias seguras
   const detectedApiRef = useRef<LanguageModelFactory | null>(null);
   const aiSessionRef = useRef<LanguageModelSession | null>(null);
 
-  // 4. Prompts dinámicos según el modo
+  //Prompts dinámicos según el modo
   const systemPrompt = devMode === "web"
     ? "Eres un asistente de IA experto en desarrollo web metido en el editor Codeasy. Revisa el código y ayuda de forma concisa en español. El contexto que se te pasará incluye HTML, CSS y JavaScript."
     : "Eres un asistente de IA experto en algoritmos y JavaScript metido en el editor Codeasy. Revisa el código y ayuda de forma concisa en español. El contexto que se te pasará incluye únicamente JavaScript.";

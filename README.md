@@ -1,6 +1,6 @@
 # Codeasy - Online Code Editor & Local AI Sandbox
 
-Codeasy es un entorno de desarrollo interactivo (IDE) en el navegador ligero, ultra-rápido y con inteligencia artificial local integrada, diseñado para prototipado ágil y resolución de algoritmos.
+Codeasy es un entorno de desarrollo interactivo (IDE) en el navegador ligero y con inteligencia artificial local integrada, diseñado para prototipado ágil y resolución de algoritmos.
 
 ![Codeasy Preview](public/codeasy_hero.png)
 
@@ -14,7 +14,7 @@ Codeasy se adapta a tu flujo de trabajo dividiéndose en dos entornos completame
     *   **Sidebar (Apilado):** Los editores se apilan verticalmente para pantallas anchas.
 *   **Modo Algoritmos:** Diseñado especialmente para desafíos de código y pruebas de lógica. Desactiva los paneles HTML y CSS para ofrecerte un lienzo JavaScript limpio con una **Consola Integrada** en tiempo real a pantalla completa, capaz de interceptar logs y errores no controlados.
 
-### 2. Asistente de IA Local (Gemini Nano)
+### 2. Asistente de IA Local (Gemini Nano & Prompt API)
 Integración nativa con la **Prompt API de Google Chrome** (`window.ai`), lo que permite un chatbot inteligente ultrarrápido y offline, que procesa tu código con total privacidad local en tu GPU/NPU:
 *   **Aislamiento de Código:** En modo web, Gemini Nano recibe tus paneles de HTML, CSS y JS. En modo algoritmos, el contexto se restringe únicamente al código JavaScript, evitando fugas de contexto innecesarias.
 *   **Historiales de Chat Separados:** Si estás chateando en desarrollo web y cambias a algoritmos, tu conversación se guardará de forma independiente y verás un historial e inicio adaptado a tu tarea actual. Al volver, recuperarás tu conversación intacta.
@@ -25,7 +25,7 @@ Integración nativa con la **Prompt API de Google Chrome** (`window.ai`), lo que
 *   Los estados de código de JavaScript están totalmente aislados: tu script de la página web y tu algoritmo lógico no se mezclan ni se sobrescriben al alternar de modo.
 *   Al iniciar, Codeasy recuerda el último modo activo y restaura tu código de forma automática.
 
-### 4. Sistema de Exportación y Descarga Profesional
+### 4. Sistema de Exportación y Descarga de archivos
 *   **Guardar Explícito:** Un botón visual en la barra superior con retroalimentación inmediata mediante un **Toast animado de éxito** que confirma la persistencia local.
 *   **Exportar como ZIP (.zip):** Descarga el proyecto web completo empaquetado en un archivo comprimido. Contiene una estructura de archivos limpia y enlazada de forma estándar:
     *   `index.html`: Vincula las hojas de estilo y scripts automáticamente.
@@ -85,14 +85,12 @@ Para habilitar la IA local en tu navegador Google Chrome, sigue estos pasos:
     ```bash
     npm run build
     ```
-
+6. Tener en cuenta los requisitos necesarios para la utilización de la IA en el navegador de forma local. Pueden consultarse en la siguiente url:
+   [Prompt_API](https://developer.chrome.com/docs/ai/prompt-api?hl=es-419#hardware-requirements)
+   
 ---
 
-## 🌿 Estrategia de Ramas (Branching)
+## Siguientes desarrollos:
 
-Este proyecto sigue una arquitectura de desarrollo estructurada basada en características unificadas de forma lineal:
-1.  Las características o resolución de bugs se desarrollan en ramas específicas (`feature/*`, `bug/*`).
-2.  Cada nueva rama se construye de forma continua sobre los cimientos heredados de la anterior, garantizando integraciones estables y evitando conflictos de fusión al unificar en `main`.
-
----
-*Desarrollado con ❤️ para llevar el prototipado web y la experimentación lógica al siguiente nivel.*
+1. Sistema de gestión de ficheros, de tal forma que podamos crear más de un fichero a la vez y editarlo.
+2. Para el modo algoritmos, se implementará la funcionalidad de visualizar el algoritmo implementado, de tal forma que te ayude a entener el funcionamiento de lo que estás programando de manera gráfica.
