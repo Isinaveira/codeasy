@@ -1,21 +1,21 @@
 # Codeasy - The Offline Local AI Code Sandbox
 
-Codeasy no es solo otro editor de código online. Es un **entorno de desarrollo interactivo (IDE) ultraligero potenciado por Inteligencia Artificial Local**.
+Codeasy es un entorno de desarrollo interactivo (IDE) ultraligero que se ejecuta en el navegador y está diseñado para el prototipado ágil y la resolución de algoritmos. 
 
-Mientras que la mayoría de los editores con IA dependen de servidores en la nube, latencia de red y suscripciones de pago, Codeasy utiliza la **Prompt API de Google Chrome** para ejecutar modelos de IA (Gemini Nano) **directamente en el hardware de tu dispositivo (GPU/NPU)**. Esto garantiza cero latencia de red, privacidad absoluta (tu código nunca viaja a internet) y funcionamiento 100% offline.
+A diferencia de los editores basados en la nube, Codeasy utiliza la **Prompt API de Google Chrome** para ejecutar modelos de IA (Gemini Nano) localmente en el hardware del dispositivo (GPU/NPU). Este enfoque asegura privacidad al procesar el código sin conexión a internet y sin latencia de red.
 
 ![Codeasy Preview](public/codeasy_hero.png)
 
 ---
 
-## ✨ El Diferenciador Principal: Asistente de IA Local 
+## ✨ Asistente de IA Local (Chrome Built-in AI)
 
-Codeasy está construido alrededor del motor **Chrome Built-in AI**. No es un simple chat; es un asistente contextual profundo:
+Codeasy integra un asistente contextual alimentado por la IA integrada en el navegador:
 
-*   **Privacidad Total y Offline:** Tu código nunca abandona tu dispositivo. Ideal para trabajar con algoritmos confidenciales o en entornos sin conexión.
-*   **Inyección de Contexto Inteligente:** La IA entiende exactamente en qué entorno estás. Si estás en modo Web, lee tu HTML, CSS y JS en tiempo real. Si estás resolviendo un problema de lógica, se enfoca únicamente en el JavaScript.
-*   **Historial de Conversaciones Persistente:** No pierdas tus hilos de pensamiento. Codeasy guarda tus chats usando `Zustand persist`, permitiéndote cambiar de modo de desarrollo, recargar la página y retomar conversaciones anteriores. Además, la IA autogenera títulos descriptivos para tus chats en segundo plano.
-*   **System Prompts Adaptativos:** El comportamiento de Gemini muta dependiendo de lo que estés haciendo. Se vuelve un experto en diseño web cuando tocas HTML/CSS, y un riguroso ingeniero de software cuando pasas al modo de algoritmos.
+*   **Procesamiento Offline:** El análisis del código se realiza íntegramente en el dispositivo local, ideal para trabajar en entornos sin conexión o con código sensible.
+*   **Inyección de Contexto Dinámico:** La IA adapta su lectura según el entorno de trabajo. En modo Web, el modelo recibe y analiza HTML, CSS y JS; en modo Algoritmos, el análisis se restringe estrictamente a la lógica en JavaScript.
+*   **Historial Persistente y Títulos Automáticos:** Las conversaciones se almacenan localmente mediante `Zustand persist`, permitiendo retomar sesiones tras recargar la página. La IA genera de manera asíncrona un título descriptivo basado en el primer mensaje de cada sesión.
+*   **System Prompts Adaptativos:** Las instrucciones del modelo cambian automáticamente para especializar sus respuestas en diseño de interfaces o ingeniería algorítmica, dependiendo del modo activo.
 
 ---
 
