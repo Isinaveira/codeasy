@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, type FormEvent } from "react";
 import { useCodeStore } from "../store/useCodeStore";
-import { useChatStore, Conversation } from "../store/useChatStore";
+import { useChatStore, type Conversation } from "../store/useChatStore";
 
 export type AssistantStatus = "checking" | "config_error" | "ready" | "downloadable" | "downloading";
 

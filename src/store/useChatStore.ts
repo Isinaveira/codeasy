@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DevMode } from "./useCodeStore";
-import { Message } from "../hooks/useAiAssistant";
+import type { DevMode } from "./useCodeStore";
+import type { Message } from "../hooks/useAiAssistant";
 
 export interface Conversation {
   id: string;
