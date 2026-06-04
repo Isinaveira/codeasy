@@ -38,7 +38,7 @@ export default function AiAssistantPanel() {
       <div className="flex flex-1 overflow-hidden relative">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute top-2 left-2 z-20 p-2 bg-canvas hover:bg-surface border border-line rounded-md shadow-sm text-text/70 hover:text-brand transition-colors"
+          className="absolute top-2.5 left-2.5 z-20 w-9 h-9 flex items-center justify-center bg-canvas hover:bg-surface border border-line rounded-md shadow-sm text-text/70 hover:text-brand transition-colors"
           title={isSidebarOpen ? "Ocultar historial" : "Mostrar historial"}
         >
           <History className="w-4 h-4" />
@@ -46,7 +46,7 @@ export default function AiAssistantPanel() {
 
         {isSidebarOpen && <ConversationSidebar />}
         
-        <div className={`flex-1 flex flex-col relative overflow-hidden transition-all duration-300 ${!isSidebarOpen ? "ml-12" : ""}`}>
+        <div className={`flex-1 flex flex-col relative overflow-hidden transition-all duration-300 ${!isSidebarOpen ? "ml-14" : ""}`}>
           {status === "checking" && <CheckingScreen />}
 
           {status === "downloadable" && (

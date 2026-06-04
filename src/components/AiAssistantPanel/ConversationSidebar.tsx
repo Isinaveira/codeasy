@@ -10,10 +10,10 @@ export default function ConversationSidebar() {
 
   return (
     <aside className="w-64 h-full bg-surface border-r border-line flex flex-col transition-all duration-300 shrink-0">
-      <div className="py-2.5 pr-3 pl-12 border-b border-line">
+      <div className="p-2.5 pr-3 pl-14 border-b border-line">
         <button
           onClick={() => clearActiveConversation()}
-          className="w-full flex items-center justify-center gap-2 p-2 bg-brand text-white rounded font-medium hover:bg-brand/90 transition-colors"
+          className="w-full h-9 flex items-center justify-center gap-2 px-3 bg-brand text-white rounded font-medium hover:bg-brand/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Nuevo Chat
