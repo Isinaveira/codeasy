@@ -46,6 +46,13 @@ export function useAiAssistant() {
     : "Eres un asistente de IA experto en algoritmos y JavaScript metido en el editor Codeasy. Revisa el código y ayuda de forma concisa en español. El contexto que se te pasará incluye únicamente JavaScript.";
 
   useEffect(() => {
+    const activeConv = useChatStore.getState().conversations.find((c) => c.id === useChatStore.getState().activeId);
+    if (activeConv && activeConv.mode !== devMode) {
+      useChatStore.getState().clearActiveConversation();
+    }
+  }, [devMode]);
+
+  useEffect(() => {
     if (!isAiOpen) return;
 
     const checkAiAvailability = async () => {
