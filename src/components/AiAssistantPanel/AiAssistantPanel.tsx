@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useAiAssistant } from "../../hooks/useAiAssistant";
-import { BrainCircuit } from "lucide-react";
+import { BrainCircuit, History } from "lucide-react";
 import {
   CheckingScreen,
   DownloadableScreen,
@@ -10,6 +11,7 @@ import ChatInterface from "./ChatInterface";
 import ConversationSidebar from "./ConversationSidebar";
 
 export default function AiAssistantPanel() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const {
     status,
     messages,
@@ -28,13 +30,22 @@ export default function AiAssistantPanel() {
       data-testid="ai-panel"
       className="w-[45%] h-full bg-surface border-l border-line flex flex-col transition-all duration-300"
     >
-      <header className="flex flex-row items-center p-3 bg-canvas text-xs font-bold uppercase tracking-widest text-main border-b border-line gap-2 select-none">
-        <BrainCircuit className="w-4 h-4 text-brand" /> 
-        <span>AI Assistant</span>
+      <header className="flex flex-row items-center justify-between p-3 bg-canvas text-xs font-bold uppercase tracking-widest text-main border-b border-line select-none">
+        <div className="flex items-center gap-2">
+          <BrainCircuit className="w-4 h-4 text-brand" /> 
+          <span>AI Assistant</span>
+        </div>
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="p-1 hover:bg-surface rounded text-text/70 hover:text-brand transition-colors"
+          title={isSidebarOpen ? "Ocultar historial" : "Mostrar historial"}
+        >
+          <History className="w-4 h-4" />
+        </button>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <ConversationSidebar />
+        {isSidebarOpen && <ConversationSidebar />}
         
         <div className="flex-1 flex flex-col relative overflow-hidden">
           {status === "checking" && <CheckingScreen />}
