@@ -9,8 +9,8 @@ export default function ConversationSidebar() {
   const modeConversations = conversations.filter((c) => c.mode === devMode);
 
   return (
-    <aside className="w-64 h-full bg-surface border-r border-line flex flex-col transition-all duration-300">
-      <div className="p-3 border-b border-line">
+    <aside className="w-64 h-full bg-surface border-r border-line flex flex-col transition-all duration-300 shrink-0">
+      <div className="py-2.5 pr-3 pl-12 border-b border-line">
         <button
           onClick={() => clearActiveConversation()}
           className="w-full flex items-center justify-center gap-2 p-2 bg-brand text-white rounded font-medium hover:bg-brand/90 transition-colors"
