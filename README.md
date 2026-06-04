@@ -1,68 +1,66 @@
-# Codeasy - Online Code Editor & Local AI Sandbox
+# Codeasy - The Offline Local AI Code Sandbox
 
-Codeasy es un entorno de desarrollo interactivo (IDE) en el navegador ligero y con inteligencia artificial local integrada, diseñado para prototipado ágil y resolución de algoritmos.
+Codeasy es un entorno de desarrollo interactivo (IDE) ultraligero que se ejecuta en el navegador y está diseñado para el prototipado ágil y la resolución de algoritmos. 
+
+A diferencia de los editores basados en la nube, Codeasy utiliza la **Prompt API de Google Chrome** para ejecutar modelos de IA (Gemini Nano) localmente en el hardware del dispositivo (GPU/NPU). Este enfoque asegura privacidad al procesar el código sin conexión a internet y sin latencia de red.
 
 ![Codeasy Preview](public/codeasy_hero.png)
 
-## 🌟 Características Clave
+---
 
-### 1. Modos de Desarrollo Especializados (Web & Algoritmos)
-Codeasy se adapta a tu flujo de trabajo dividiéndose en dos entornos completamente independientes:
-*   **Modo Desarrollo Web:** Escribe `HTML`, `CSS` y `JavaScript` y observa los resultados renderizarse de forma instantánea en un `iframe` seguro. Ofrece tres modos de visualización avanzados:
-    *   **Cuadrícula:** Vista equilibrada clásica.
-    *   **Pestañas:** Maximiza el espacio para concentrarte en un archivo a la vez.
-    *   **Sidebar (Apilado):** Los editores se apilan verticalmente para pantallas anchas.
-*   **Modo Algoritmos:** Diseñado especialmente para desafíos de código y pruebas de lógica. Desactiva los paneles HTML y CSS para ofrecerte un lienzo JavaScript limpio con una **Consola Integrada** en tiempo real a pantalla completa, capaz de interceptar logs y errores no controlados.
+## ✨ Asistente de IA Local (Chrome Built-in AI)
 
-### 2. Asistente de IA Local (Gemini Nano & Prompt API)
-Integración nativa con la **Prompt API de Google Chrome** (`window.ai`), lo que permite un chatbot inteligente ultrarrápido y offline, que procesa tu código con total privacidad local en tu GPU/NPU:
-*   **Aislamiento de Código:** En modo web, Gemini Nano recibe tus paneles de HTML, CSS y JS. En modo algoritmos, el contexto se restringe únicamente al código JavaScript, evitando fugas de contexto innecesarias.
-*   **Historiales de Chat Separados:** Si estás chateando en desarrollo web y cambias a algoritmos, tu conversación se guardará de forma independiente y verás un historial e inicio adaptado a tu tarea actual. Al volver, recuperarás tu conversación intacta.
-*   **System Prompts Dinámicos:** La persona e instrucciones de Gemini se reconfiguran dinámicamente al cambiar de modo para especializarse en estructuración web o en resolución lógica de algoritmos.
+Codeasy integra un asistente contextual alimentado por la IA integrada en el navegador:
 
-### 3. Persistencia Automática e Aislamiento de Código
-*   Todo el código escrito se guarda automáticamente en el almacenamiento local del navegador (`localStorage`).
-*   Los estados de código de JavaScript están totalmente aislados: tu script de la página web y tu algoritmo lógico no se mezclan ni se sobrescriben al alternar de modo.
-*   Al iniciar, Codeasy recuerda el último modo activo y restaura tu código de forma automática.
-
-### 4. Sistema de Exportación y Descarga de archivos
-*   **Guardar Explícito:** Un botón visual en la barra superior con retroalimentación inmediata mediante un **Toast animado de éxito** que confirma la persistencia local.
-*   **Exportar como ZIP (.zip):** Descarga el proyecto web completo empaquetado en un archivo comprimido. Contiene una estructura de archivos limpia y enlazada de forma estándar:
-    *   `index.html`: Vincula las hojas de estilo y scripts automáticamente.
-    *   `style.css`: Estilos del editor aislados.
-    *   `script.js`: Lógica web aislada.
-*   **HTML Único Completo:** Genera un único archivo HTML compilado e inyectado con estilos y scripts para compartir proyectos rápidamente o probarlos offline con 1 clic.
-*   Descargas individuales de cualquier archivo del editor con un menú desplegable inteligente.
-
-### 5. Interfaz Premium e Identidad Visual
-*   **Monaco Editor:** Integración de los editores profesionales de Microsoft VS Code con resaltado de sintaxis, autocompletado y atajos avanzados.
-*   **Branding & Iconografía:** Selector de tema claro y oscuro impecable, logotipos vectoriales de marca y favicon de alto contraste optimizado (`favicon.avif`) para visualización ideal en las pestañas del navegador.
+*   **Procesamiento Offline:** El análisis del código se realiza íntegramente en el dispositivo local, ideal para trabajar en entornos sin conexión o con código sensible.
+*   **Inyección de Contexto Dinámico:** La IA adapta su lectura según el entorno de trabajo. En modo Web, el modelo recibe y analiza HTML, CSS y JS; en modo Algoritmos, el análisis se restringe estrictamente a la lógica en JavaScript.
+*   **Historial Persistente y Títulos Automáticos:** Las conversaciones se almacenan localmente mediante `Zustand persist`, permitiendo retomar sesiones tras recargar la página. La IA genera de manera asíncrona un título descriptivo basado en el primer mensaje de cada sesión.
+*   **System Prompts Adaptativos:** Las instrucciones del modelo cambian automáticamente para especializar sus respuestas en diseño de interfaces o ingeniería algorítmica, dependiendo del modo activo.
 
 ---
 
-## 🛠 Tecnologías Utilizadas
+## 🌟 Otras Características Clave
 
-*   **Core:** React 19, TypeScript, Vite.
-*   **Editores:** Monaco Editor (`@monaco-editor/react`).
-*   **Estilos:** Tailwind CSS, Vanilla CSS (Glassmorphism y Micro-animaciones).
-*   **Estado Global:** Zustand 5 (Mecanismo de almacenamiento persistente aislado).
-*   **Herramientas & ZIP:** JSZip (compresión en navegador), Lucide React.
-*   **Motor IA:** Google Chrome built-in AI (Prompt API).
-*   **Pruebas:** Vitest, React Testing Library.
+### 1. Modos de Desarrollo Independientes
+El editor se adapta a tu tarea actual, aislando el código y la interfaz:
+*   **Modo Desarrollo Web:** Editores de `HTML`, `CSS` y `JavaScript` en vivo. El resultado se renderiza instantáneamente en un `iframe` seguro. Ofrece Layouts ajustables (Cuadrícula, Pestañas, Sidebar).
+*   **Modo Algoritmos:** Interfaz minimalista enfocada al 100% en JavaScript. Oculta HTML y CSS, priorizando una **Consola Integrada** en tiempo real capaz de interceptar logs y errores no controlados.
+
+### 2. Exportación y Aislamiento de Código
+*   **Aislamiento Constante:** El código de tus algoritmos no se mezcla con el de tus vistas web. Todo se guarda automáticamente en `localStorage`.
+*   **Exportar como `.zip`:** Descarga tu entorno Web enlazado de forma estándar (`index.html`, `style.css`, `script.js`).
+*   **HTML Único Compilado:** Genera con un solo clic tu proyecto completo inyectado en un único archivo HTML para probarlo donde quieras.
+
+### 3. Herramientas Profesionales
+*   **Motor Monaco Editor:** La misma base que VS Code, ofreciendo IntelliSense y atajos nativos.
+*   **Emmet Integrado:** Para maquetación ultra veloz.
+*   **Driver.js:** Sistema de tutoriales interactivos integrados.
 
 ---
 
-## ⚙️ Configuración del Motor de IA (Gemini Nano)
+## 🛠 Tecnologías Utilizadas (Stack)
 
-Para habilitar la IA local en tu navegador Google Chrome, sigue estos pasos:
+*   **Core / UI:** React 19, TypeScript, Vite.
+*   **Estilado:** Tailwind CSS v4, Lucide React (Iconografía).
+*   **Estado Global:** Zustand v5 (Arquitectura de Stores e hidratación de datos persistentes).
+*   **Editores de Código:** `@monaco-editor/react`, `emmet-monaco-es`.
+*   **IA & Utilidades:** Chrome Built-in AI (Prompt API experimental), JSZip, Marked.
+*   **Control de Calidad / Testing:** Vitest, React Testing Library, estricto desarrollo bajo metodología **TDD**.
 
-1.  Asegúrate de estar en una versión moderna de Google Chrome (estable o Canary).
-2.  Abre `chrome://flags` en tu navegador.
-3.  Busca y activa (**Enable**) las siguientes flags:
-    *   `#optimization-guide-on-device-model` -> Selecciónalo como **Enabled BypassPrefRequirement**.
-    *   `#prompt-api-for-gemini-nano` -> Selecciónalo como **Enabled**.
+---
+
+## ⚙️ Habilitar la IA Local (Prompt API)
+
+Dado que la Prompt API es una tecnología experimental de vanguardia, requiere habilitación manual en tu navegador:
+
+1.  Asegúrate de usar una versión moderna de Google Chrome (Dev o Canary recomendadas).
+2.  Navega a `chrome://flags`.
+3.  Activa las siguientes banderas:
+    *   `#optimization-guide-on-device-model` -> Selecciona **Enabled BypassPrefRequirement**.
+    *   `#prompt-api-for-gemini-nano` -> Selecciona **Enabled**.
 4.  Reinicia el navegador.
-5.  Abre `chrome://components` y verifica que **On Device Model** esté completamente descargado y actualizado (si no aparece, abre la barra lateral de IA de la aplicación para que empiece a descargarse de forma transparente).
+5.  Navega a `chrome://components` y verifica que el componente **Optimization Guide On Device Model** esté descargado.
+6.  *Referencia*: Documentación oficial de Google sobre los [Requisitos de Hardware](https://developer.chrome.com/docs/ai/prompt-api?hl=es-419#hardware-requirements).
 
 ---
 
@@ -77,20 +75,14 @@ Para habilitar la IA local en tu navegador Google Chrome, sigue estos pasos:
     ```bash
     npm run dev
     ```
-4.  Para ejecutar las pruebas automatizadas (unitarias y de hooks):
+4.  Para ejecutar las pruebas automatizadas (estricto TDD):
     ```bash
     npm run test
     ```
-5.  Para compilar el paquete optimizado para producción:
-    ```bash
-    npm run build
-    ```
-6. Tener en cuenta los requisitos necesarios para la utilización de la IA en el navegador de forma local. Pueden consultarse en la siguiente url:
-   [Prompt_API](https://developer.chrome.com/docs/ai/prompt-api?hl=es-419#hardware-requirements)
-   
+
 ---
 
-## Siguientes desarrollos:
+## 🚀 Próximos Desarrollos (Roadmap)
 
-1. Sistema de gestión de ficheros, de tal forma que podamos crear más de un fichero a la vez y editarlo.
-2. Para el modo algoritmos, se implementará la funcionalidad de visualizar el algoritmo implementado, de tal forma que te ayude a entener el funcionamiento de lo que estás programando de manera gráfica.
+1. **Sistema Completo de Ficheros:** Capacidad para crear, renombrar y eliminar múltiples archivos y pestañas dentro del editor.
+2. **Visualizador de Algoritmos:** Interfaz gráfica interactiva para seguir la ejecución paso a paso (step-by-step) del estado de las variables en tus algoritmos lógicos.

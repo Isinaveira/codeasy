@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAiAssistant } from "../../hooks/useAiAssistant";
+import { useCodeStore } from "../../store/useCodeStore";
+import { useToast } from "../../hooks/useToast";
 import { BrainCircuit, History } from "lucide-react";
 import {
   CheckingScreen,
@@ -9,9 +11,32 @@ import {
 } from "./StatusScreens";
 import ChatInterface from "./ChatInterface";
 import ConversationSidebar from "./ConversationSidebar";
+import ImportDiffModal from "./ImportDiffModal";
+
+interface ImportTarget {
+  code: string;
+  language: string;
+}
 
 export default function AiAssistantPanel() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [importTarget, setImportTarget] = useState<ImportTarget | null>(null);
+
+  const { toast, showToast, dismissToast } = useToast();
+  const devMode = useCodeStore((s) => s.devMode);
+  const currentCode = useCodeStore((s) => {
+    if (!importTarget) return "";
+    const lang = importTarget.language === "javascript" ? "js" : importTarget.language;
+    if (devMode === "algorithms" && lang === "js") return s.algoJs;
+    if (lang === "html") return s.html;
+    if (lang === "css") return s.css;
+    if (lang === "js") return s.webJs;
+    return "";
+  });
+  const setHtml = useCodeStore((s) => s.setHtml);
+  const setCss = useCodeStore((s) => s.setCss);
+  const setJs = useCodeStore((s) => s.setJs);
+
   const {
     status,
     messages,
@@ -22,6 +47,20 @@ export default function AiAssistantPanel() {
     handleDownload,
     handleSendMessage
   } = useAiAssistant();
+
+  const handleImportCode = useCallback((code: string, language: string) => {
+    setImportTarget({ code, language });
+  }, []);
+
+  const handleAcceptImport = useCallback(() => {
+    if (!importTarget) return;
+    const lang = importTarget.language === "javascript" ? "js" : importTarget.language;
+    if (lang === "html") setHtml(importTarget.code);
+    else if (lang === "css") setCss(importTarget.code);
+    else if (lang === "js") setJs(importTarget.code);
+    setImportTarget(null);
+    showToast("Código importado correctamente");
+  }, [importTarget, setHtml, setCss, setJs, showToast]);
 
   if (!isAiOpen) return null;
 
@@ -64,10 +103,33 @@ export default function AiAssistantPanel() {
               onInputChange={setInputValue}
               onSubmit={handleSendMessage}
               isGenerating={isGenerating}
+              onImportCode={handleImportCode}
             />
           )}
         </div>
       </div>
+
+      {importTarget && (
+        <ImportDiffModal
+          currentCode={currentCode}
+          suggestedCode={importTarget.code}
+          language={importTarget.language}
+          onAccept={handleAcceptImport}
+          onClose={() => setImportTarget(null)}
+        />
+      )}
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#1e1e2e] text-[#cdd6f4] px-5 py-3 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+          <span>{toast}</span>
+          <button
+            onClick={dismissToast}
+            className="ml-2 text-dim hover:text-main cursor-pointer"
+          >
+            ✕
+          </button>
+        </div>
+      )}
     </section>
   );
 }
