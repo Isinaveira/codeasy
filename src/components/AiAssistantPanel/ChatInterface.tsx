@@ -1,11 +1,13 @@
 import { useEffect, useRef, type FormEvent } from "react";
 import type { Message } from "../../hooks/useAiAssistant";
 import { marked } from "marked";
+import CodeBlock from "./CodeBlock";
 
 interface MessageListProps {
   messages: Message[];
   isGenerating: boolean;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
+  onImportCode: (code: string, language: string) => void;
 }
 
 interface MessageFormProps {
@@ -21,9 +23,36 @@ interface ChatInterfaceProps {
   onInputChange: (value: string) => void;
   onSubmit: (e: FormEvent) => void;
   isGenerating: boolean;
+  onImportCode: (code: string, language: string) => void;
 }
 
-export function MessageList({ messages, isGenerating, messagesEndRef }: MessageListProps) {
+function renderAssistantMessage(text: string, onImportCode: (code: string, language: string) => void) {
+  const tokens = marked.lexer(text);
+  const SUPPORTED = new Set(["html", "css", "js", "javascript"]);
+
+  return tokens.map((token, i) => {
+    if (token.type === "code" && token.lang && SUPPORTED.has(token.lang)) {
+      return (
+        <CodeBlock
+          key={i}
+          language={token.lang}
+          code={token.text}
+          onImport={() => onImportCode(token.text, token.lang!)}
+        />
+      );
+    }
+
+    return (
+      <div
+        key={i}
+        className="markdown-content text-xs w-full overflow-hidden"
+        dangerouslySetInnerHTML={{ __html: marked.parse(token.raw) as string }}
+      />
+    );
+  });
+}
+
+export function MessageList({ messages, isGenerating, messagesEndRef, onImportCode }: MessageListProps) {
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
       {messages.map((msg, index) => (
@@ -44,10 +73,7 @@ export function MessageList({ messages, isGenerating, messagesEndRef }: MessageL
           {msg.role === "user" ? (
             <p className="whitespace-pre-wrap font-medium tracking-tight">{msg.text}</p>
           ) : (
-            <div 
-              className="markdown-content text-xs w-full overflow-hidden"
-              dangerouslySetInnerHTML={{ __html: marked.parse(msg.text) as string }}
-            />
+            renderAssistantMessage(msg.text, onImportCode)
           )}
         </div>
       ))}
@@ -98,7 +124,8 @@ export default function ChatInterface({
   inputValue,
   onInputChange,
   onSubmit,
-  isGenerating
+  isGenerating,
+  onImportCode
 }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -115,6 +142,7 @@ export default function ChatInterface({
         messages={messages}
         isGenerating={isGenerating}
         messagesEndRef={messagesEndRef}
+        onImportCode={onImportCode}
       />
       <MessageForm
         inputValue={inputValue}
