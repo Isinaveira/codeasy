@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, type FormEvent } from "react";
-import { useCodeStore, type DevMode } from "../store/useCodeStore";
+import { useCodeStore } from "../store/useCodeStore";
+import { useChatStore, type Conversation } from "../store/useChatStore";
 
 export type AssistantStatus = "checking" | "config_error" | "ready" | "downloadable" | "downloading";
 
@@ -8,7 +9,6 @@ export interface Message {
   text: string;
 }
 
-// Interfaces de tipos experimentales para Chrome Built-in AI
 interface LanguageModelCapabilities {
   available: "readily" | "after-download" | "no";
 }
@@ -29,52 +29,38 @@ interface LanguageModelFactory {
 }
 
 export function useAiAssistant() {
-  //Contexto de Zustand
   const { isAiOpen, html, css, js, devMode } = useCodeStore();
+  const { conversations, activeId, addConversation, updateConversation, setActiveConversation } = useChatStore();
 
-  // 2. Estados locales
   const [status, setStatus] = useState<AssistantStatus>("checking");
   const [aiSession, setAiSession] = useState<LanguageModelSession | null>(null);
   
-  const [messagesByMode, setMessagesByMode] = useState<Record<DevMode, Message[]>>({
-    web: [
-      {
-        role: "assistant",
-        text: "¡Hola! He detectado tu entorno local con éxito. Estoy conectado a tus editores de desarrollo web en Codeasy. ¿En qué puedo ayudarte hoy con tu HTML, CSS o JavaScript?"
-      }
-    ],
-    algorithms: [
-      {
-        role: "assistant",
-        text: "¡Hola! He detectado tu entorno local con éxito. Estoy conectado a tu editor de algoritmos en JavaScript. ¿En qué puedo ayudarte hoy con tus problemas o desafíos de código?"
-      }
-    ]
-  });
-
   const [inputValue, setInputValue] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
 
-  //Referencias seguras
   const detectedApiRef = useRef<LanguageModelFactory | null>(null);
   const aiSessionRef = useRef<LanguageModelSession | null>(null);
 
-  //Prompts dinámicos según el modo
   const systemPrompt = devMode === "web"
     ? "Eres un asistente de IA experto en desarrollo web metido en el editor Codeasy. Revisa el código y ayuda de forma concisa en español. El contexto que se te pasará incluye HTML, CSS y JavaScript."
     : "Eres un asistente de IA experto en algoritmos y JavaScript metido en el editor Codeasy. Revisa el código y ayuda de forma concisa en español. El contexto que se te pasará incluye únicamente JavaScript.";
 
-  // 5. Verificación adaptativa del entorno de IA al abrir el panel o cambiar de modo
+  useEffect(() => {
+    const activeConv = useChatStore.getState().conversations.find((c) => c.id === useChatStore.getState().activeId);
+    if (activeConv && activeConv.mode !== devMode) {
+      useChatStore.getState().clearActiveConversation();
+    }
+  }, [devMode]);
+
   useEffect(() => {
     if (!isAiOpen) return;
 
     const checkAiAvailability = async () => {
       try {
         setStatus("checking");
-
         let apiTarget: LanguageModelFactory | null = null;
         const win = window as any;
 
-        // Rastreamos las tres variantes conocidas de la API de Google (2025/2026)
         if (typeof win.LanguageModel !== "undefined") {
           apiTarget = win.LanguageModel;
         } else if ("ai" in win && "assistant" in win.ai) {
@@ -88,12 +74,9 @@ export function useAiAssistant() {
           return;
         }
 
-        // Guardamos la API compatible en la referencia segura
         detectedApiRef.current = apiTarget;
-
         let state: string = "unavailable";
 
-        // Ejecutamos la comprobación según los métodos disponibles en la versión de Chrome
         if (typeof apiTarget.availability === "function") {
           state = await apiTarget.availability({ languages: ["es"] });
         } else if (typeof apiTarget.capabilities === "function") {
@@ -103,19 +86,10 @@ export function useAiAssistant() {
           if (capState === "no") state = "unavailable";
         }
 
-        console.log("🤖 Codeasy AI Engine - Estado detectado:", state);
-
-        // Derivación de estados
         if (state === "available" || state === "downloaded") {
-          // Destruimos la sesión previa si existe
           if (aiSessionRef.current && typeof aiSessionRef.current.destroy === "function") {
-            try {
-              aiSessionRef.current.destroy();
-            } catch (e) {
-              console.warn("Error destruyendo la sesión de IA previa:", e);
-            }
+            try { aiSessionRef.current.destroy(); } catch (e) {}
           }
-
           const session = await apiTarget.create({ systemPrompt });
           aiSessionRef.current = session;
           setAiSession(session);
@@ -128,27 +102,22 @@ export function useAiAssistant() {
           setStatus("config_error");
         }
       } catch (error) {
-        console.error("Error validando IA:", error);
         setStatus("config_error");
       }
     };
 
     checkAiAvailability();
 
-    // Cleanup session on unmount/close/mode-change if applicable
     return () => {
       if (aiSessionRef.current && typeof aiSessionRef.current.destroy === "function") {
         try {
           aiSessionRef.current.destroy();
           aiSessionRef.current = null;
-        } catch (e) {
-          console.warn("Error destruyendo la sesión de IA:", e);
-        }
+        } catch (e) {}
       }
     };
   }, [isAiOpen, devMode]);
 
-  // 6. Manejador de descarga asíncrona nativa
   const handleDownload = async () => {
     const apiTarget = detectedApiRef.current;
     if (!apiTarget) return;
@@ -156,24 +125,17 @@ export function useAiAssistant() {
     setStatus("downloading");
     try {
       if (aiSessionRef.current && typeof aiSessionRef.current.destroy === "function") {
-        try {
-          aiSessionRef.current.destroy();
-        } catch (e) {
-          console.warn("Error destruyendo la sesión de IA previa:", e);
-        }
+        try { aiSessionRef.current.destroy(); } catch (e) {}
       }
-
       const session = await apiTarget.create({ systemPrompt });
       aiSessionRef.current = session;
       setAiSession(session);
       setStatus("ready");
     } catch (error) {
-      console.error("Error en la descarga del modelo:", error);
       setStatus("config_error");
     }
   };
 
-  // 7. Enviar mensaje e inyectar contexto de los editores
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || !aiSession || isGenerating) return;
@@ -183,62 +145,82 @@ export function useAiAssistant() {
     setInputValue("");
     setIsGenerating(true);
 
-    // Renderizamos el mensaje del desarrollador
-    setMessagesByMode((prev) => ({
-      ...prev,
-      [activeMode]: [...prev[activeMode], { role: "user", text: userText }]
-    }));
+    let currentConversation: Conversation | undefined;
+    let isNewConversation = false;
 
-    // Inyección de contexto invisible enriquecida
+    if (!activeId) {
+      isNewConversation = true;
+      const newId = crypto.randomUUID();
+      const newConv: Conversation = {
+        id: newId,
+        title: "Nueva conversación...",
+        mode: activeMode,
+        messages: [{ role: "user", text: userText }],
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
+      addConversation(newConv);
+      setActiveConversation(newId);
+      currentConversation = newConv;
+    } else {
+      currentConversation = conversations.find((c) => c.id === activeId);
+      if (currentConversation) {
+        updateConversation(activeId, {
+          messages: [...currentConversation.messages, { role: "user", text: userText }]
+        });
+      }
+    }
+
     const promptConContexto = activeMode === "web"
-      ? `
-[CONTEXTO DEL CÓDIGO ACTUAL EN EL EDITOR DE CODEASY (MODO DESARROLLO WEB)]
----
-HTML:
-${html}
----
-CSS:
-${css}
----
-JAVASCRIPT:
-${js}
----
-[FIN DEL CONTEXTO]
-
-Pregunta del usuario: ${userText}
-`
-      : `
-[CONTEXTO DEL CÓDIGO ACTUAL EN EL EDITOR DE CODEASY (MODO ALGORITMOS)]
----
-JAVASCRIPT:
-${js}
----
-[FIN DEL CONTEXTO]
-
-Pregunta del usuario: ${userText}
-`;
+      ? `[CONTEXTO HTML]\n${html}\n[CONTEXTO CSS]\n${css}\n[CONTEXTO JS]\n${js}\nPregunta: ${userText}`
+      : `[CONTEXTO JS]\n${js}\nPregunta: ${userText}`;
 
     try {
       const response = await aiSession.prompt(promptConContexto);
-      setMessagesByMode((prev) => ({
-        ...prev,
-        [activeMode]: [...prev[activeMode], { role: "assistant", text: response }]
-      }));
+      
+      const convId = currentConversation?.id || activeId;
+      if (convId) {
+        const convToUpdate = useChatStore.getState().conversations.find((c) => c.id === convId);
+        if (convToUpdate) {
+          updateConversation(convId, {
+            messages: [...convToUpdate.messages, { role: "assistant", text: response }]
+          });
+        }
+
+        if (isNewConversation) {
+          // Generate title asynchronously
+          setTimeout(async () => {
+            try {
+              const apiTarget = detectedApiRef.current;
+              if (apiTarget) {
+                const titleSession = await apiTarget.create({ systemPrompt: "Eres un resumidor. Devuelve un titulo de maximo 4 palabras sobre el tema principal." });
+                const title = await titleSession.prompt(`Resume esto en un titulo corto: ${userText}`);
+                updateConversation(convId, { title: title.replace(/['"]/g, '').trim() });
+                if (typeof titleSession.destroy === "function") titleSession.destroy();
+              }
+            } catch (e) {
+              updateConversation(convId, { title: userText.slice(0, 30) + "..." });
+            }
+          }, 500);
+        }
+      }
     } catch (error) {
-      console.error("Error generando respuesta local:", error);
-      setMessagesByMode((prev) => ({
-        ...prev,
-        [activeMode]: [
-          ...prev[activeMode],
-          { role: "assistant", text: "Lo siento, ha ocurrido un error al procesar el código localmente en Gemini Nano." }
-        ]
-      }));
+      const convId = currentConversation?.id || activeId;
+      if (convId) {
+        const convToUpdate = useChatStore.getState().conversations.find((c) => c.id === convId);
+        if (convToUpdate) {
+          updateConversation(convId, {
+            messages: [...convToUpdate.messages, { role: "assistant", text: "Error procesando el código localmente." }]
+          });
+        }
+      }
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const messages = messagesByMode[devMode] || [];
+  const activeConversation = conversations.find((c) => c.id === activeId);
+  const messages = activeConversation?.messages || [];
 
   return {
     status,

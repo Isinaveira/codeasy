@@ -2,70 +2,51 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useAiAssistant } from "./useAiAssistant";
 import { useCodeStore } from "../store/useCodeStore";
+import { useChatStore } from "../store/useChatStore";
 
 describe("useAiAssistant Hook", () => {
   const mockPrompt = vi.fn();
-  const mockDestroy = vi.fn();
   const mockCreate = vi.fn();
 
   beforeEach(() => {
     vi.restoreAllMocks();
     mockPrompt.mockReset();
-    mockDestroy.mockReset();
     mockCreate.mockReset();
 
-    // Mock Chrome Built-in AI API
     (window as any).ai = {
       languageModel: {
         capabilities: vi.fn().mockResolvedValue({ available: "readily" }),
         create: mockCreate.mockResolvedValue({
           prompt: mockPrompt,
-          destroy: mockDestroy,
+          destroy: vi.fn(),
         }),
       },
     };
 
-    // Reset code store to defaults
     act(() => {
       useCodeStore.setState({
-        isAiOpen: false,
+        isAiOpen: true,
         devMode: "web",
         html: "<h1>Web HTML</h1>",
         css: "h1 { color: red; }",
         js: "console.log('Web JS');",
       });
+      useChatStore.setState({ conversations: [], activeId: null });
     });
   });
 
-  test("debería inicializar con los mensajes por defecto de desarrollo web", () => {
+  test("debería iniciar sin mensajes si no hay conversacion", () => {
     const { result } = renderHook(() => useAiAssistant());
-    expect(result.current.messages).toHaveLength(1);
-    expect(result.current.messages[0].text).toContain("desarrollo web");
+    expect(result.current.messages).toHaveLength(0);
   });
 
-  test("debería inicializar con los mensajes de algoritmos cuando devMode es 'algorithms'", () => {
-    act(() => {
-      useCodeStore.setState({ devMode: "algorithms" });
-    });
-
-    const { result } = renderHook(() => useAiAssistant());
-    expect(result.current.messages).toHaveLength(1);
-    expect(result.current.messages[0].text).toContain("algoritmos");
-  });
-
-  test("debería enviar sólo el JavaScript en modo algoritmos y conservar el HTML/CSS en modo web", async () => {
-    act(() => {
-      useCodeStore.setState({ isAiOpen: true, devMode: "web" });
-    });
-
+  test("debería inyectar contexto de HTML, CSS y JS en modo web", async () => {
     const { result } = renderHook(() => useAiAssistant());
 
-    // Esperar a que la sesión esté lista
     await vi.waitFor(() => {
       expect(result.current.status).toBe("ready");
     });
 
-    // Enviar mensaje en modo web
     mockPrompt.mockResolvedValue("Respuesta web");
     act(() => {
       result.current.setInputValue("Hola");
@@ -75,47 +56,33 @@ describe("useAiAssistant Hook", () => {
       await result.current.handleSendMessage({ preventDefault: () => {} } as any);
     });
 
-    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("[CONTEXTO DEL CÓDIGO ACTUAL EN EL EDITOR DE CODEASY (MODO DESARROLLO WEB)]"));
-    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("HTML:\n<h1>Web HTML</h1>"));
-    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("CSS:\nh1 { color: red; }"));
-    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("JAVASCRIPT:\nconsole.log('Web JS');"));
+    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("[CONTEXTO HTML]"));
+    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("<h1>Web HTML</h1>"));
+    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("[CONTEXTO CSS]"));
+  });
 
-    // Cambiar a modo algoritmos
+  test("debería inyectar sólo JS en modo algoritmos", async () => {
     act(() => {
       useCodeStore.setState({ devMode: "algorithms" });
     });
 
-    // Esperar a que la sesión se actualice
+    const { result } = renderHook(() => useAiAssistant());
+
     await vi.waitFor(() => {
       expect(result.current.status).toBe("ready");
     });
 
-    expect(result.current.messages).toHaveLength(1);
-    expect(result.current.messages[0].text).toContain("algoritmos"); // Mensaje de bienvenida de algoritmos
-
-    // Enviar mensaje en modo algoritmos
-    mockPrompt.mockReset();
     mockPrompt.mockResolvedValue("Respuesta algoritmos");
     act(() => {
-      result.current.setInputValue("Hola de nuevo");
+      result.current.setInputValue("Hola algos");
     });
     
     await act(async () => {
       await result.current.handleSendMessage({ preventDefault: () => {} } as any);
     });
 
-    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("[CONTEXTO DEL CÓDIGO ACTUAL EN EL EDITOR DE CODEASY (MODO ALGORITMOS)]"));
-    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("JAVASCRIPT:\nconsole.log('Web JS');"));
+    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("[CONTEXTO JS]"));
+    expect(mockPrompt).toHaveBeenCalledWith(expect.stringContaining("console.log('Web JS');"));
     expect(mockPrompt).not.toHaveBeenCalledWith(expect.stringContaining("HTML:"));
-    expect(mockPrompt).not.toHaveBeenCalledWith(expect.stringContaining("CSS:"));
-
-    // Volver a modo web para comprobar que el historial original se mantiene intacto
-    act(() => {
-      useCodeStore.setState({ devMode: "web" });
-    });
-
-    expect(result.current.messages).toHaveLength(3); // Bienvenida + Pregunta + Respuesta
-    expect(result.current.messages[1].text).toBe("Hola");
-    expect(result.current.messages[2].text).toBe("Respuesta web");
   });
 });
